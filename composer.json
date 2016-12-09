@@ -1,0 +1,15 @@
+{
+  "name": "chefkoch/morphoji",
+  "description": "A library to convert UTF-8 emoji characters to latin1 placeholders and vice versa.",
+  "minimum-stability": "stable",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Jens Bremmekamp",
+      "email": "jens.bremmekamp@chefkoch.de"
+    }
+  ],
+  "require-dev": {
+    "phpunit/phpunit": "4.1.*"
+  }
+}
