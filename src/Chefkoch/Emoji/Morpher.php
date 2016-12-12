@@ -3,6 +3,18 @@
 namespace Chefkoch\Emoji;
 
 
+/**
+ * Class Morpher
+ *
+ * Converts texts with Unicode Emoji (https://en.wikipedia.org/wiki/Emoji,
+ * http://unicode.org/emoji/index.html) to texts where all Emoji found are
+ * replaced with latin1 based placeholders.
+ *
+ * Default placeholders are of the form `:emoji-HEX_VALUE:` where `HEX_VALUE` is
+ * the hex value of the emoji's unicode character.
+ *
+ * @package Chefkoch\Emoji
+ */
 class Morpher
 {
 
@@ -110,6 +122,15 @@ class Morpher
     private $idPattern;
 
 
+    /**
+     * Morpher constructor.
+     *
+     * Can be given a custom prefix for the placeholders as well as a delitimer
+     * string with which the placeholders will be surrounded.
+     *
+     * @param string $prefix
+     * @param string $delimiter
+     */
     public function __construct($prefix = 'emoji', $delimiter = ':')
     {
         $this->prefix = $prefix;
@@ -119,10 +140,14 @@ class Morpher
     }
 
     /**
+     * Morphs all unicode emoji in the given text into placeholders.
+     *
+     * Returns the text with the morphed emoji or null if there was a problem.
+     *
      * @param string $text
      * @return string|null
      */
-    public function toLatin1Ids($text)
+    public function toPlaceholders($text)
     {
         $latin1Text = preg_replace_callback(
             self::DETECT_EMOJI_PATTERN,
@@ -131,7 +156,7 @@ class Morpher
                 $utf32 = mb_convert_encoding($char, 'UTF-32', 'UTF-8');
                 $hex4 = bin2hex($utf32);
 
-                return $this->getLatin1Id($hex4);
+                return $this->getPlaceholder($hex4);
             },
             $text
         );
@@ -140,12 +165,17 @@ class Morpher
     }
 
     /**
+     * Morphs all placeholder in the given text into unicode emoji.
+     *
+     * Returns the text with the morphed placeholders or null if there was a
+     * problem.
+     *
      * @param string $text
      * @return string|null
      */
     public function toUnicode($text)
     {
-        $regexPattern = '/' . $this->getLatin1Id('[a-f\d]{8}') . '/';
+        $regexPattern = '/' . $this->getPlaceholder('[a-f\d]{8}') . '/';
 
         $unicodeText = preg_replace_callback($regexPattern, function ($match) {
             $code = array_pop($match);
@@ -158,10 +188,15 @@ class Morpher
     }
 
     /**
+     * Returns a placeholder for the given text.
+     *
+     * The text usually being the hex code for the emoji or the regex needed
+     * to find the plaholders.
+     *
      * @param string $text
      * @return string
      */
-    private function getLatin1Id($text)
+    private function getPlaceholder($text)
     {
         return sprintf('%s%s-%s%s',
             $this->delimiter, $this->prefix, $text, $this->delimiter);

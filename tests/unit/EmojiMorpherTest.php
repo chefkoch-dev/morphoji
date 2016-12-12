@@ -16,7 +16,7 @@ class EmojiMorpherTest extends \PHPUnit_Framework_TestCase
 
     public function testConvertToId() {
         $smilieText = "Happy new year! 😀";
-        $this->assertEquals("Happy new year! :emoji-0001f600:", $this->morpher->toLatin1Ids($smilieText));
+        $this->assertEquals("Happy new year! :emoji-0001f600:", $this->morpher->toPlaceholders($smilieText));
     }
 
     public function testConvertToSmilie() {
