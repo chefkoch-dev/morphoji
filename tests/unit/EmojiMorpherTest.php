@@ -15,12 +15,12 @@ class EmojiMorpherTest extends \PHPUnit_Framework_TestCase
     }
 
     public function testConvertToId() {
-        $smilieText = "Happy new year! \x{1f600}";
-        $this->assertEquals("Happy new year! :emoji-1f600:", $this->morpher->toLatin1Ids($smilieText));
+        $smilieText = "Happy new year! 😀";
+        $this->assertEquals("Happy new year! :emoji-0001f600:", $this->morpher->toLatin1Ids($smilieText));
     }
 
     public function testConvertToSmilie() {
-        $smilieText = "Happy new year! \x{1f600}";
-        $this->assertEquals("Happy new year! :emoji-1f600:", $this->morpher->toUnicode($smilieText));
+        $smilieText = "Happy new year! :emoji-0001f600:";
+        $this->assertEquals("Happy new year! 😀", $this->morpher->toUnicode($smilieText));
     }
 }

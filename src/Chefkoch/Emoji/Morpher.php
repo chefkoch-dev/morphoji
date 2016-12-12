@@ -6,7 +6,7 @@ namespace Chefkoch\Emoji;
 class Morpher
 {
 
-    private $emojiPattern = '/[' .
+    const DETECT_EMOJI_PATTERN = '/[' .
 
             // Various 'older' charactes, dingbats etc. which over time have
             // have become associated with emoji.
@@ -105,15 +105,66 @@ class Morpher
 
             ']/u';
 
-    private $latin1IdPattern = '/:emoji-[a-f\d]{8}:/';
+    private $prefix;
+    private $delimiter;
+    private $idPattern;
 
+
+    public function __construct($prefix = 'emoji', $delimiter = ':')
+    {
+        $this->prefix = $prefix;
+        $this->delimiter = $delimiter;
+        $this->idPattern = sprintf('/%s%s-[a-f\d]{8}%s/',
+            $this->delimiter, $this->prefix, $this->delimiter);
+    }
+
+    /**
+     * @param string $text
+     * @return string|null
+     */
     public function toLatin1Ids($text)
     {
-        return '';
+        $latin1Text = preg_replace_callback(
+            self::DETECT_EMOJI_PATTERN,
+            function ($match) {
+                $char = array_pop($match);
+                $utf32 = mb_convert_encoding($char, 'UTF-32', 'UTF-8');
+                $hex4 = bin2hex($utf32);
+
+                return $this->getLatin1Id($hex4);
+            },
+            $text
+        );
+
+        return $latin1Text;
     }
 
+    /**
+     * @param string $text
+     * @return string|null
+     */
     public function toUnicode($text)
     {
-        return '';
+        $regexPattern = '/' . $this->getLatin1Id('[a-f\d]{8}') . '/';
+
+        $unicodeText = preg_replace_callback($regexPattern, function ($match) {
+            $code = array_pop($match);
+            $hex4 = substr($code, 7, 8);
+
+            return mb_convert_encoding(hex2bin($hex4), 'UTF-8', 'UTF-32');
+        }, $text);
+
+        return $unicodeText;
     }
+
+    /**
+     * @param string $text
+     * @return string
+     */
+    private function getLatin1Id($text)
+    {
+        return sprintf('%s%s-%s%s',
+            $this->delimiter, $this->prefix, $text, $this->delimiter);
+    }
+
 }
