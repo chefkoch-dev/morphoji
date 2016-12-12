@@ -116,9 +116,9 @@ class Morpher
             '\x{1f000}-\x{1f9cf}' .
 
             ']/u';
+    const DELIMITER = ':';
 
     private $prefix;
-    private $delimiter;
     private $idPattern;
 
 
@@ -129,14 +129,12 @@ class Morpher
      * string with which the placeholders will be surrounded.
      *
      * @param string $prefix
-     * @param string $delimiter
      */
-    public function __construct($prefix = 'emoji', $delimiter = ':')
+    public function __construct($prefix = 'emoji')
     {
         $this->prefix = $prefix;
-        $this->delimiter = $delimiter;
         $this->idPattern = sprintf('/%s%s-[a-f\d]{8}%s/',
-            $this->delimiter, $this->prefix, $this->delimiter);
+            self::DELIMITER, $this->prefix, self::DELIMITER);
     }
 
     /**
@@ -179,7 +177,7 @@ class Morpher
 
         $unicodeText = preg_replace_callback($regexPattern, function ($match) {
             $code = array_pop($match);
-            $hex4 = substr($code, 7, 8);
+            $hex4 = substr($code, strlen($this->prefix) + 2, 8);
 
             return mb_convert_encoding(hex2bin($hex4), 'UTF-8', 'UTF-32');
         }, $text);
@@ -199,7 +197,6 @@ class Morpher
     private function getPlaceholder($text)
     {
         return sprintf('%s%s-%s%s',
-            $this->delimiter, $this->prefix, $text, $this->delimiter);
+            self::DELIMITER, $this->prefix, $text, self::DELIMITER);
     }
-
 }
