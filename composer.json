@@ -3,6 +3,7 @@
   "description": "A library to convert UTF-8 emoji characters to latin1 placeholders and vice versa.",
   "minimum-stability": "stable",
   "license": "MIT",
+  "version": "dev-master",
   "authors": [
     {
       "name": "Jens Bremmekamp",
