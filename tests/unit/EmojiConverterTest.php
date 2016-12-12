@@ -3,16 +3,16 @@
 namespace Chefkoch\Emoji;
 
 
-class EmojiMorpherTest extends \PHPUnit_Framework_TestCase
+class EmojiConverterTest extends \PHPUnit_Framework_TestCase
 {
 
-    /** @var Morpher */
-    private $morpher;
+    /** @var Converter */
+    private $converter;
 
     private $prefix = 'test';
 
     protected function setUp() {
-        $this->morpher = new Morpher($this->prefix);
+        $this->converter = new Converter($this->prefix);
     }
 
     public function variantEmojiProvider()
@@ -51,7 +51,7 @@ class EmojiMorpherTest extends \PHPUnit_Framework_TestCase
         $text = "Happy new year!";
         $expect = "$text :$this->prefix-$charId::$this->prefix-$modifierId:";
 
-        $this->assertEquals($expect, $this->morpher->toPlaceholders("$text $char"));
+        $this->assertEquals($expect, $this->converter->toPlaceholders("$text $char"));
     }
 
     /**
@@ -66,7 +66,7 @@ class EmojiMorpherTest extends \PHPUnit_Framework_TestCase
         $expect = "$text $char";
         $placeholders = "$text :$this->prefix-$charId::$this->prefix-$modifierId:";
 
-        $this->assertEquals($expect, $this->morpher->toUnicode($placeholders));
+        $this->assertEquals($expect, $this->converter->toUnicode($placeholders));
     }
 
     /**
@@ -79,7 +79,7 @@ class EmojiMorpherTest extends \PHPUnit_Framework_TestCase
         $text = "Dearly departed ...";
         $expect = "$text :$this->prefix-$id:";
 
-        $this->assertEquals($expect, $this->morpher->toPlaceholders("$text $char"));
+        $this->assertEquals($expect, $this->converter->toPlaceholders("$text $char"));
     }
 
     /**
@@ -93,6 +93,6 @@ class EmojiMorpherTest extends \PHPUnit_Framework_TestCase
         $expect = "$text $char";
         $placeholders = "$text :$this->prefix-$id:";
 
-        $this->assertEquals($expect, $this->morpher->toUnicode($placeholders));
+        $this->assertEquals($expect, $this->converter->toUnicode($placeholders));
     }
 }

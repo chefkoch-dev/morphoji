@@ -15,7 +15,7 @@ namespace Chefkoch\Emoji;
  *
  * @package Chefkoch\Emoji
  */
-class Morpher
+class Converter
 {
 
     const DELIMITER = ':';
@@ -135,7 +135,7 @@ class Morpher
     }
 
     /**
-     * Morphs all unicode emoji in the given text into placeholders.
+     * Converts all unicode emoji in the given text into placeholders.
      *
      * Returns the text with the morphed emoji or null if there was a problem.
      *
@@ -158,7 +158,7 @@ class Morpher
     }
 
     /**
-     * Morphs all placeholder in the given text into unicode emoji.
+     * Converts all placeholders in the given text into unicode emoji.
      *
      * Returns the text with the morphed placeholders or null if there was a
      * problem.
