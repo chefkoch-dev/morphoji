@@ -1,21 +1,26 @@
 {
   "name": "chefkoch/morphoji",
+  "type": "library",
   "description": "A library to convert UTF-8 emoji characters to latin1 placeholders and vice versa.",
-  "minimum-stability": "stable",
+  "keywords": ["emoji", "unicode", "utf8"],
+  "homepage": "https://github.com/chefkoch-dev/morphoji",
   "license": "MIT",
-  "version": "dev-master",
   "authors": [
     {
       "name": "Jens Bremmekamp",
       "email": "jens.bremmekamp@chefkoch.de"
     }
   ],
+  "minimum-stability": "stable",
+  "require": {
+    "php": ">=5.5.0"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "4.1.*"
+  },
   "autoload": {
     "psr-4": {
       "Chefkoch\\": "src/Chefkoch"
     }
-  },
-  "require-dev": {
-    "phpunit/phpunit": "4.1.*"
   }
 }
