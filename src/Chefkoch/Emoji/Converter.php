@@ -142,7 +142,7 @@ class Converter
      * @param string $text
      * @return string|null
      */
-    public function toPlaceholders($text)
+    public function emojiToPlaceholders($text)
     {
         $pattern = $this->getEmojiDetectPattern();
 
@@ -166,7 +166,7 @@ class Converter
      * @param string $text
      * @return string|null
      */
-    public function toUnicode($text)
+    public function placeholdersToEmoji($text)
     {
         $hexLen = 8;
         $regexPattern = '/' . $this->getPlaceholder("[a-f\\d]{{$hexLen}}") . '/';

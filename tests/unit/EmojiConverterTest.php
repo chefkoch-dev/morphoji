@@ -51,7 +51,7 @@ class EmojiConverterTest extends \PHPUnit_Framework_TestCase
         $text = "Happy new year!";
         $expect = "$text :$this->prefix-$charId::$this->prefix-$modifierId:";
 
-        $this->assertEquals($expect, $this->converter->toPlaceholders("$text $char"));
+        $this->assertEquals($expect, $this->converter->emojiToPlaceholders("$text $char"));
     }
 
     /**
@@ -66,7 +66,7 @@ class EmojiConverterTest extends \PHPUnit_Framework_TestCase
         $expect = "$text $char";
         $placeholders = "$text :$this->prefix-$charId::$this->prefix-$modifierId:";
 
-        $this->assertEquals($expect, $this->converter->toUnicode($placeholders));
+        $this->assertEquals($expect, $this->converter->placeholdersToEmoji($placeholders));
     }
 
     /**
@@ -79,7 +79,7 @@ class EmojiConverterTest extends \PHPUnit_Framework_TestCase
         $text = "Dearly departed ...";
         $expect = "$text :$this->prefix-$id:";
 
-        $this->assertEquals($expect, $this->converter->toPlaceholders("$text $char"));
+        $this->assertEquals($expect, $this->converter->emojiToPlaceholders("$text $char"));
     }
 
     /**
@@ -93,6 +93,6 @@ class EmojiConverterTest extends \PHPUnit_Framework_TestCase
         $expect = "$text $char";
         $placeholders = "$text :$this->prefix-$id:";
 
-        $this->assertEquals($expect, $this->converter->toUnicode($placeholders));
+        $this->assertEquals($expect, $this->converter->placeholdersToEmoji($placeholders));
     }
 }
