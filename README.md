@@ -55,7 +55,7 @@ Now if you have `$text` containing (possibly) Emoji characters handle it like
 this:
 
 ```php
-$converter = new \Chefkoch\Emoji\Converter();
+$converter = new \Chefkoch\Morphoji\Converter();
 
 $textWithPlaceholders = $converter->toPlaceholders($text);
 
@@ -72,7 +72,7 @@ Alternatively you can use the `Text` class if you want to go fully OO and have
 call stack space to spare. :)
 
 ```php
-$text = new \Chefkoch\Emoji\Text($rawTextWithEmoji);
+$text = new \Chefkoch\Morphoji\Text($rawTextWithEmoji);
 
 $text->getWithPlaceholders();
 $text->getWithEmoji();

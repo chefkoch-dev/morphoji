@@ -1,7 +1,6 @@
 <?php
 
-namespace Chefkoch\Emoji;
-
+namespace Chefkoch\Morphoji;
 
 /**
  * Class Converter
@@ -13,7 +12,7 @@ namespace Chefkoch\Emoji;
  * Default placeholders are of the form `:emoji-HEX_VALUE:` where `HEX_VALUE` is
  * the hex value of the emoji's unicode character.
  *
- * @package Chefkoch\Emoji
+ * @package Chefkoch\Morphoji
  */
 class Converter
 {

@@ -1,9 +1,10 @@
 <?php
 
-namespace Chefkoch\Emoji;
+namespace Chefkoch\Morphoji\Tests;
 
+use Chefkoch\Morphoji\Converter;
 
-class EmojiConverterTest extends \PHPUnit_Framework_TestCase
+class ConverterTest extends \PHPUnit_Framework_TestCase
 {
 
     /** @var Converter */
