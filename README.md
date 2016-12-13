@@ -49,6 +49,8 @@ where you want to use it:
 composer require --dev chefkoch/morphoji
 ```
 
+### Converter
+
 Now if you have `$text` containing (possibly) Emoji characters handle it like 
 this:
 
@@ -62,6 +64,18 @@ $db->insert($textWithPlaceholders); // Dummy code for DB insert command.
 $textWithEmoji = $converter->toUnicode($textWithPlaceholders);
 
 return new Response($textWithEmoji); // Dummy code for HTML response to browser.
+```
+
+### Text
+
+Alternatively you can use the `Text` class if you want to go fully OO and have
+call stack space to spare. :)
+
+```php
+$text = new \Chefkoch\Emoji\Text($rawTextWithEmoji);
+
+$text->getWithPlaceholders();
+$text->getWithEmoji();
 ```
 
 ## How it works
