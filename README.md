@@ -46,7 +46,7 @@ Morphoji can be required via [Composer](https://getcomposer.org) in the project
 where you want to use it:
 
 ```bash
-composer require --dev chefkoch/morphoji
+composer require chefkoch/morphoji
 ```
 
 ### Converter
