@@ -20,7 +20,10 @@
   },
   "autoload": {
     "psr-4": {
-      "Chefkoch\\": "src/Chefkoch"
+      "Chefkoch\\Morphoji\\": "src"
     }
+  },
+  "autoload-dev": {
+    "psr-4": { "Chefkoch\\Morphoji\\Tests\\": "tests/" }
   }
 }

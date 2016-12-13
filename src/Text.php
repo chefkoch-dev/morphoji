@@ -1,7 +1,6 @@
 <?php
 
-namespace Chefkoch\Emoji;
-
+namespace Chefkoch\Morphoji;
 
 /**
  * Class Text
@@ -11,7 +10,7 @@ namespace Chefkoch\Emoji;
  * The text can be retrived with all emoji characters converted to placeholders
  * or all placeholders converted to emoji characters.
  *
- * @package Chefkoch\Emoji
+ * @package Chefkoch\Morphoji
  */
 class Text
 {
@@ -27,7 +26,6 @@ class Text
 
     /** @var string */
     private $textEmoji;
-
 
     /**
      * Text constructor.

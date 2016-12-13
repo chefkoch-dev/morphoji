@@ -1,9 +1,10 @@
 <?php
 
-namespace Chefkoch\Emoji;
+namespace Chefkoch\Morphoji\Tests;
 
+use Chefkoch\Morphoji\Text;
 
-class EmojiTextTest extends \PHPUnit_Framework_TestCase
+class TextTest extends \PHPUnit_Framework_TestCase
 {
 
     public function testSimpleEmojiAsPlaceholders() {
