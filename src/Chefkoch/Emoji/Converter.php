@@ -168,14 +168,18 @@ class Converter
      */
     public function toUnicode($text)
     {
-        $regexPattern = '/' . $this->getPlaceholder('[a-f\d]{8}') . '/';
+        $hexLen = 8;
+        $regexPattern = '/' . $this->getPlaceholder("[a-f\\d]{{$hexLen}}") . '/';
+        $start = strlen($this->prefix) + 2;
 
-        $unicodeText = preg_replace_callback($regexPattern, function ($match) {
-            $code = array_pop($match);
-            $hex4 = substr($code, strlen($this->prefix) + 2, 8);
+        $unicodeText = preg_replace_callback($regexPattern,
+            function ($match) use ($start, $hexLen) {
+                $code = array_pop($match);
+                $hex4 = substr($code, $start, $hexLen);
 
-            return mb_convert_encoding(hex2bin($hex4), 'UTF-8', 'UTF-32');
-        }, $text);
+                return mb_convert_encoding(hex2bin($hex4), 'UTF-8', 'UTF-32');
+            }
+        , $text);
 
         return $unicodeText;
     }
