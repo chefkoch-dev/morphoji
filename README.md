@@ -1,6 +1,6 @@
 # Morphoji
 
-Morphoji is a tiny PHP library to convert Unicode Emoji characters 🤗 into 
+Morphoji is a tiny PHP library to **morph** Unicode Em**oji** characters 🤗 into 
 Latin1 placeholder strings 🙀 and back. 👍
 
 ## Use Case

@@ -4,7 +4,7 @@ namespace Chefkoch\Emoji;
 
 
 /**
- * Class Morpher
+ * Class Converter
  *
  * Converts texts with Unicode Emoji (https://en.wikipedia.org/wiki/Emoji,
  * http://unicode.org/emoji/index.html) to texts where all Emoji found are
@@ -122,7 +122,7 @@ class Converter
 
 
     /**
-     * Morpher constructor.
+     * Converter constructor.
      *
      * Can be given a custom prefix for the placeholders as well as a delitimer
      * string with which the placeholders will be surrounded.
