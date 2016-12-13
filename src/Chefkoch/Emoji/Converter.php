@@ -195,6 +195,11 @@ class Converter
             self::DELIMITER, $this->prefix, $text, self::DELIMITER);
     }
 
+    /**
+     * Returns a regular expression pattern to detect emoji characters.
+     *
+     * @return string
+     */
     private function getEmojiDetectPattern()
     {
         return '/[' . implode("", $this->emojiCodes) . ']/u';
