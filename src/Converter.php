@@ -19,119 +19,10 @@ class Converter
 
     const DELIMITER = ':';
 
-    /** @var array */
-    private $emojiCodes = [
-        // Various 'older' charactes, dingbats etc. which over time have
-        // have become associated with emoji.
-        '\x{203c}',
-        '\x{2049}',
-        '\x{2122}',
-        '\x{2139}',
-        '\x{2194}-\x{2199}',
-        '\x{21a9}-\x{21aa}',
-        '\x{231a}-\x{231b}',
-        '\x{2328}',
-        '\x{23ce}-\x{23cf}',
-        '\x{23e9}-\x{23f3}',
-        '\x{23f8}-\x{23fa}',
-        '\x{24c2}',
-        '\x{25aa}-\x{25ab}',
-        '\x{25b6}',
-        '\x{25c0}',
-        '\x{25fb}-\x{25fe}',
-        '\x{2600}-\x{2604}',
-        '\x{260e}',
-        '\x{2611}',
-        '\x{2614}-\x{2615}',
-        '\x{2618}',
-        '\x{261d}',
-        '\x{2620}',
-        '\x{2622}-\x{2623}',
-        '\x{2626}',
-        '\x{262a}',
-        '\x{262e}-\x{262f}',
-        '\x{2638}-\x{263a}',
-        '\x{2640}',
-        '\x{2642}',
-        '\x{2648}-\x{2653}',
-        '\x{2660}',
-        '\x{2663}',
-        '\x{2665}-\x{2666}',
-        '\x{2668}',
-        '\x{267b}',
-        '\x{267f}',
-        '\x{2692}-\x{2697}',
-        '\x{2699}',
-        '\x{269b}-\x{269c}',
-        '\x{26a0}-\x{26a1}',
-        '\x{26aa}-\x{26ab}',
-        '\x{26b0}-\x{26b1}',
-        '\x{26bd}-\x{26be}',
-        '\x{26c4}-\x{26c5}',
-        '\x{26c8}',
-        '\x{26ce}-\x{26cf}',
-        '\x{26d1}',
-        '\x{26d3}-\x{26d4}',
-        '\x{26e9}-\x{26ea}',
-        '\x{26f0}-\x{26f5}',
-        '\x{26f7}-\x{26fa}',
-        '\x{26fd}',
-        '\x{2702}',
-        '\x{2705}',
-        '\x{2708}-\x{270d}',
-        '\x{270f}',
-        '\x{2712}',
-        '\x{2714}',
-        '\x{2716}',
-        '\x{271d}',
-        '\x{2721}',
-        '\x{2728}',
-        '\x{2733}-\x{2734}',
-        '\x{2744}',
-        '\x{2747}',
-        '\x{274c}',
-        '\x{274e}',
-        '\x{2753}-\x{2755}',
-        '\x{2757}',
-        '\x{2763}-\x{2764}',
-        '\x{2795}-\x{2797}',
-        '\x{27a1}',
-        '\x{27b0}',
-        '\x{27bf}',
-        '\x{2934}-\x{2935}',
-        '\x{2b05}-\x{2b07}',
-        '\x{2b1b}-\x{2b1c}',
-        '\x{2b50}',
-        '\x{2b55}',
-        '\x{3030}',
-        '\x{303d}',
-        '\x{3297}',
-        '\x{3299}',
-
-        // Modifier for emoji sequences.
-        '\x{200d}',
-        '\x{20e3}',
-        '\x{fe0f}',
-
-        // 'Regular' emoji unicode space, containing the bulk of them.
-        '\x{1f000}-\x{1f9cf}'
-    ];
-
-    private $prefix;
-
-
-    /**
-     * Converter constructor.
-     *
-     * Can be given a custom prefix for the placeholders as well as a delitimer
-     * string with which the placeholders will be surrounded.
-     *
-     * @param string $prefix
-     */
-    public function __construct($prefix = 'emoji')
-    {
-        $this->prefix = $prefix;
-    }
+    /** @var string */
+    private static $emojiPattern;
+    /** @var string */
+    private static $entityPattern;
 
     /**
      * Converts all unicode emoji in the given text into placeholders.
@@ -141,16 +32,16 @@ class Converter
      * @param string $text
      * @return string|null
      */
-    public function emojiToPlaceholders($text)
+    public function emojiToEntities($text)
     {
-        $pattern = $this->getEmojiDetectPattern();
+        $pattern = $this->getEmojiPattern();
 
         $latin1Text = preg_replace_callback($pattern, function ($match) {
             $char = array_pop($match);
             $utf32 = mb_convert_encoding($char, 'UTF-32', 'UTF-8');
-            $hex4 = bin2hex($utf32);
+            $hex = ltrim(bin2hex($utf32), '0');
 
-            return $this->getPlaceholder($hex4);
+            return $this->getHtmlEntity($hex);
         }, $text);
 
         return $latin1Text;
@@ -165,16 +56,15 @@ class Converter
      * @param string $text
      * @return string|null
      */
-    public function placeholdersToEmoji($text)
+    public function entitiesToEmoji($text)
     {
-        $hexLen = 8;
-        $regexPattern = '/' . $this->getPlaceholder("[a-f\\d]{{$hexLen}}") . '/';
-        $start = strlen($this->prefix) + 2;
+        $hexPattern = '/^' . $this->getHtmlEntity('([\w\d]{2,8})') . '$/i';
 
-        $unicodeText = preg_replace_callback($regexPattern,
-            function ($match) use ($start, $hexLen) {
-                $code = array_pop($match);
-                $hex4 = substr($code, $start, $hexLen);
+        $unicodeText = preg_replace_callback($this->getEntityPattern(),
+            function ($match) use ($hexPattern) {
+                $entity = array_pop($match);
+                preg_match($hexPattern, $entity, $matches);
+                $hex4 = str_pad(array_pop($matches), 8, '0', STR_PAD_LEFT);
 
                 return mb_convert_encoding(hex2bin($hex4), 'UTF-8', 'UTF-32');
             }
@@ -184,18 +74,14 @@ class Converter
     }
 
     /**
-     * Returns a placeholder for the given text.
+     * Returns the given hex string as html entity.
      *
-     * The text usually being the hex code for the emoji or the regex needed
-     * to find the plaholders.
-     *
-     * @param string $text
+     * @param string $hex
      * @return string
      */
-    private function getPlaceholder($text)
+    private function getHtmlEntity($hex)
     {
-        return sprintf('%s%s-%s%s',
-            self::DELIMITER, $this->prefix, $text, self::DELIMITER);
+        return "&#x$hex;";
     }
 
     /**
@@ -203,8 +89,165 @@ class Converter
      *
      * @return string
      */
-    private function getEmojiDetectPattern()
+    private function getEmojiPattern()
     {
-        return '/[' . implode("", $this->emojiCodes) . ']/u';
+        if (null === self::$emojiPattern) {
+            $codeString = '';
+
+            foreach ($this->getEmojiCodeList() as $code) {
+                if (is_array($code)) {
+
+                    $first = dechex(array_shift($code));
+                    $last  = dechex(array_pop($code));
+                    $codeString .= '\x{' . $first . '}-\x{' . $last . '}';
+
+                } else {
+                    $codeString .= '\x{' . dechex($code) . '}';
+                }
+            }
+
+            self::$emojiPattern = "/[$codeString]/u";
+        }
+
+        return self::$emojiPattern;
     }
+
+    /**
+     * Returns a regex pattern to detect emoji html entities.
+     *
+     * @return string
+     */
+    private function getEntityPattern()
+    {
+        if (null === self::$entityPattern) {
+            $entities = [];
+
+            foreach ($this->getEmojiCodeList() as $code) {
+                if (!is_array($code)) {
+                    $entities[] = $this->getHtmlEntity(dechex($code));
+                } else {
+                    foreach($code as $c) {
+                        $entities[] = $this->getHtmlEntity(dechex($c));
+                    }
+                }
+            }
+
+            self::$entityPattern = '/' . implode('|', $entities) . '/i';
+        }
+
+        return self::$entityPattern;
+    }
+
+    /**
+     * Returns an array with all unicode values for emoji characters.
+     *
+     * This is a function so the array can be defined with a mix of hex values
+     * and range() calls to conveniently meintain the array with information
+     * from the official Unicode tables (where values are given in hex as well).
+     *
+     * With PHP > 5.6 this could be done in class variable, maybe even a
+     * constant.
+     *
+     * @return array
+     */
+    private function getEmojiCodeList()
+    {
+        return [
+            // Various 'older' charactes, dingbats etc. which over time have
+            // received an additional emoji representation.
+            0x203c,
+            0x2049,
+            0x2122,
+            0x2139,
+            range(0x2194, 0x2199),
+            range(0x21a9, 0x21aa),
+            range(0x231a, 0x231b),
+            0x2328,
+            range(0x23ce, 0x23cf),
+            range(0x23e9, 0x23f3),
+            range(0x23f8, 0x23fa),
+            0x24c2,
+            range(0x25aa, 0x25ab),
+            0x25b6,
+            0x25c0,
+            range(0x25fb, 0x25fe),
+            range(0x2600, 0x2604),
+            0x260e,
+            0x2611,
+            range(0x2614, 0x2615),
+            0x2618,
+            0x261d,
+            0x2620,
+            range(0x2622, 0x2623),
+            0x2626,
+            0x262a,
+            range(0x262e, 0x262f),
+            range(0x2638, 0x263a),
+            0x2640,
+            0x2642,
+            range(0x2648, 0x2653),
+            0x2660,
+            0x2663,
+            range(0x2665, 0x2666),
+            0x2668,
+            0x267b,
+            0x267f,
+            range(0x2692, 0x2697),
+            0x2699,
+            range(0x269b, 0x269c),
+            range(0x26a0, 0x26a1),
+            range(0x26aa, 0x26ab),
+            range(0x26b0, 0x26b1),
+            range(0x26bd, 0x26be),
+            range(0x26c4, 0x26c5),
+            0x26c8,
+            range(0x26ce, 0x26cf),
+            0x26d1,
+            range(0x26d3, 0x26d4),
+            range(0x26e9, 0x26ea),
+            range(0x26f0, 0x26f5),
+            range(0x26f7, 0x26fa),
+            0x26fd,
+            0x2702,
+            0x2705,
+            range(0x2708, 0x270d),
+            0x270f,
+            0x2712,
+            0x2714,
+            0x2716,
+            0x271d,
+            0x2721,
+            0x2728,
+            range(0x2733, 0x2734),
+            0x2744,
+            0x2747,
+            0x274c,
+            0x274e,
+            range(0x2753, 0x2755),
+            0x2757,
+            range(0x2763, 0x2764),
+            range(0x2795, 0x2797),
+            0x27a1,
+            0x27b0,
+            0x27bf,
+            range(0x2934, 0x2935),
+            range(0x2b05, 0x2b07),
+            range(0x2b1b, 0x2b1c),
+            0x2b50,
+            0x2b55,
+            0x3030,
+            0x303d,
+            0x3297,
+            0x3299,
+
+            // Modifier for emoji sequences.
+            0x200d,
+            0x20e3,
+            0xfe0f,
+
+            // 'Regular' emoji unicode space, containing the bulk of them.
+            range(0x1f000, 0x1f9cf)
+        ];
+    }
+
 }

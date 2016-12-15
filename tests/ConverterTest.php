@@ -10,18 +10,16 @@ class ConverterTest extends \PHPUnit_Framework_TestCase
     /** @var Converter */
     private $converter;
 
-    private $prefix = 'test';
-
     protected function setUp() {
-        $this->converter = new Converter($this->prefix);
+        $this->converter = new Converter();
     }
 
     public function variantEmojiProvider()
     {
         return [
-            'tm'       => ['00002122', '™️', '0000fe0f'],
-            'skull'    => ['00002620', '☠️', '0000fe0f'],
-            'up_arrow' => ['00002b06', '⬆️', '0000fe0f'],
+            'tm'       => ['™️', '2122', 'fe0f'],
+            'skull'    => ['☠️', '2620', 'fe0f'],
+            'up_arrow' => ['⬆️', '2b06', 'fe0f'],
         ];
     }
 
@@ -35,8 +33,8 @@ class ConverterTest extends \PHPUnit_Framework_TestCase
     public function simpleEmojiProvider()
     {
         return [
-            'penguin'           => ['id' => '0001f427', 'char' => '🐧'],
-            'crying_w_laughter' => ['id' => '0001f602', 'char' => '😂'],
+            'penguin'           => ['1f427', '🐧'],
+            'crying_w_laughter' => ['1f602', '😂'],
         ];
 
     }
@@ -45,29 +43,29 @@ class ConverterTest extends \PHPUnit_Framework_TestCase
      * @dataProvider variantEmojiProvider
      * @param string $charId
      * @param string $char
-     * @param string $modifierId
+     * @param string $modId
      */
-    public function testConvertEmojiVariantToPlaceholder($charId, $char, $modifierId)
+    public function testConvertEmojiVariantToPlaceholder($char, $charId, $modId)
     {
         $text = "Happy new year!";
-        $expect = "$text :$this->prefix-$charId::$this->prefix-$modifierId:";
+        $expect = "$text &#x{$charId};&#x{$modId};";
 
-        $this->assertEquals($expect, $this->converter->emojiToPlaceholders("$text $char"));
+        $this->assertEquals($expect, $this->converter->emojiToEntities("$text $char"));
     }
 
     /**
      * @dataProvider variantEmojiProvider
      * @param string $charId
      * @param string $char
-     * @param string $modifierId
+     * @param string $modId
      */
-    public function testConvertPlaceholderToEmojiVariant($charId, $char, $modifierId)
+    public function testConvertPlaceholderToEmojiVariant($char, $charId, $modId)
     {
         $text = "Happy new year!";
         $expect = "$text $char";
-        $placeholders = "$text :$this->prefix-$charId::$this->prefix-$modifierId:";
+        $placeholders= "$text &#x{$charId};&#x{$modId};";
 
-        $this->assertEquals($expect, $this->converter->placeholdersToEmoji($placeholders));
+        $this->assertEquals($expect, $this->converter->entitiesToEmoji($placeholders));
     }
 
     /**
@@ -75,12 +73,12 @@ class ConverterTest extends \PHPUnit_Framework_TestCase
      * @param string $char
      * @dataProvider simpleEmojiProvider
      */
-    public function testConvertSimpleEmojiToPlacesholder($id, $char)
+    public function testConvertSimpleEmojiToPlaceholder($id, $char)
     {
         $text = "Dearly departed ...";
-        $expect = "$text :$this->prefix-$id:";
+        $expect = "$text &#x$id;";
 
-        $this->assertEquals($expect, $this->converter->emojiToPlaceholders("$text $char"));
+        $this->assertEquals($expect, $this->converter->emojiToEntities("$text $char"));
     }
 
     /**
@@ -92,8 +90,8 @@ class ConverterTest extends \PHPUnit_Framework_TestCase
     {
         $text = "Dearly departed ...";
         $expect = "$text $char";
-        $placeholders = "$text :$this->prefix-$id:";
+        $placeholders = "$text &#x$id;";
 
-        $this->assertEquals($expect, $this->converter->placeholdersToEmoji($placeholders));
+        $this->assertEquals($expect, $this->converter->entitiesToEmoji($placeholders));
     }
 }
