@@ -31,11 +31,10 @@ class Text
      * Text constructor.
      *
      * @param string $text
-     * @param string $prefix optional, default is 'emoji'
      */
-    public function __construct($text, $prefix = 'emoji')
+    public function __construct($text)
     {
-        $this->converter = new Converter($prefix);
+        $this->converter = new Converter();
         $this->text = $text;
     }
 
@@ -48,7 +47,7 @@ class Text
     {
         if (null === $this->textPlaceholders) {
             $this->textPlaceholders =
-                $this->converter->emojiToPlaceholders($this->text);
+                $this->converter->emojiToEntities($this->text);
         }
 
         return $this->textPlaceholders;
@@ -63,7 +62,7 @@ class Text
     {
         if (null === $this->textEmoji) {
             $text = $this->getWithPlaceholders();
-            $this->textEmoji = $this->converter->placeholdersToEmoji($text);
+            $this->textEmoji = $this->converter->entitiesToEmoji($text);
         }
 
         return $this->textEmoji;
