@@ -17,8 +17,6 @@ namespace Chefkoch\Morphoji;
 class Converter
 {
 
-    const DELIMITER = ':';
-
     /** @var string */
     private static $emojiPattern;
     /** @var string */
