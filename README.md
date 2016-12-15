@@ -3,7 +3,7 @@
 ![](https://travis-ci.org/chefkoch-dev/morphoji.svg?branch=master)
 
 Morphoji is a tiny PHP library to **morph** Unicode Em**oji** characters 🤗 into 
-Latin1 placeholder strings 🙀 and back. 👍
+HTML entities 🙀 and back. 👍
 
 ## Use Case
 
@@ -29,12 +29,14 @@ Of course there is a systematic solution for this. Convert the columns in
 question (and your database connections to them) from `utf8` to `utf8mb4`. THAT
 charset is actually able to store ALL of the characters specified by Unicode.
 
-Be aware though that your storage consumption will grow (probably ~15% per text 
-column). Which shouldn't stop you.
+If you want to go that route (which is by far the cleanest approach) Mathias 
+Bynens wrote a 
+[great article on that](https://mathiasbynens.be/notes/mysql-utf8mb4).
 
 But also, if your database is really big and has lots of text columns and you
 don't want to convert just a few columns to the new charset but all of them
-(because consistency) and you really only care about Emoji and not about 
+(because consistency and because you will have to change your connection's
+charset as well) and you really only care about Emoji and not about 
 characters for 
 [Ancient Greek Musical Notation](https://unicode-table.com/en/#ancient-greek-musical-notation) 
 aaand you just did all that converting a couple of years ago for `utf8` and 
@@ -59,11 +61,11 @@ this:
 ```php
 $converter = new \Chefkoch\Morphoji\Converter();
 
-$textWithPlaceholders = $converter->toPlaceholders($text);
+$textWithEntities = $converter->emojiToEntities($text);
 
-$db->insert($textWithPlaceholders); // Dummy code for DB insert command.
+$db->insert($textWithEntities); // Dummy code for DB insert command.
 
-$textWithEmoji = $converter->toUnicode($textWithPlaceholders);
+$textWithEmoji = $converter->entitiesToEmoji($textWithEntities);
 
 return new Response($textWithEmoji); // Dummy code for HTML response to browser.
 ```
@@ -76,7 +78,7 @@ call stack space to spare. :)
 ```php
 $text = new \Chefkoch\Morphoji\Text($rawTextWithEmoji);
 
-$text->getWithPlaceholders();
+$text->getWithEntities();
 $text->getWithEmoji();
 ```
 
@@ -87,23 +89,33 @@ representation. This happens by using a regular expression derived from
 [official Unicode charts](http://www.unicode.org/Public/emoji/5.0/).
 
 Every character matching that regular expression will be converted into a
-string of the form
+html unicode entity:
 
 ```
-:[prefix]-[hex code]:
+&#x[hex code];
 ```
 
-The default `prefix` is `"emoji"`, so a replaced "face blowing a kiss" Emoji
-(`1F618`, 😘) will be represented as `:emoji-0001f618:`.
+E.g. a replaced "face blowing a kiss" Emoji (`1F618`, 😘) will be represented 
+as `&#x1f618;`.
 
-Converting the placeholders back works with an according (and much simpler) 
-regex; other than that it's pretty much vice versa.
+Converting the entity back works with an according regex; other than that it's 
+pretty much vice versa.
+
+### Why not just convert one way and then use HTML entities in the output?
+
+Morphoji gives you the means to convert the entities back to UTF-8, feel free
+to not use it though. ^^
+
+In my case the data stored in the database isn't necessarily output in an HTML
+context, so being able to convert the entities back is necessary. (And in a time
+where almost all output devices / applications are able to handle full UTF-8 it
+is the generally cleaner approach.)
 
 ## Other languages
 
 There are no plans to implement this in any other language. Coming up with the
-emoji detection regex is about half of the work, if you want to use it in your
-own implementation, feel free.
+emoji/entity detection regex is about half the work, if you want to use it in 
+your own implementation, feel free.
 
 ## Tests
 
