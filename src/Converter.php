@@ -140,7 +140,7 @@ class Converter
      * Returns an array with all unicode values for emoji characters.
      *
      * This is a function so the array can be defined with a mix of hex values
-     * and range() calls to conveniently meintain the array with information
+     * and range() calls to conveniently maintain the array with information
      * from the official Unicode tables (where values are given in hex as well).
      *
      * With PHP > 5.6 this could be done in class variable, maybe even a
