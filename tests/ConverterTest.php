@@ -48,9 +48,9 @@ class ConverterTest extends \PHPUnit_Framework_TestCase
     public function testConvertEmojiVariantToPlaceholder($char, $charId, $modId)
     {
         $text = "Happy new year!";
-        $expect = "$text &#x{$charId};&#x{$modId};";
+        $expect = "$text :emoji-{$charId}::emoji-{$modId}:";
 
-        $this->assertEquals($expect, $this->converter->emojiToEntities("$text $char"));
+        $this->assertEquals($expect, $this->converter->emojiToPlaceholders("$text $char"));
     }
 
     /**
@@ -63,9 +63,9 @@ class ConverterTest extends \PHPUnit_Framework_TestCase
     {
         $text = "Happy new year!";
         $expect = "$text $char";
-        $placeholders= "$text &#x{$charId};&#x{$modId};";
+        $placeholders= "$text :emoji-{$charId}::emoji-{$modId}:";
 
-        $this->assertEquals($expect, $this->converter->entitiesToEmoji($placeholders));
+        $this->assertEquals($expect, $this->converter->placeholdersToEmoji($placeholders));
     }
 
     /**
@@ -76,9 +76,9 @@ class ConverterTest extends \PHPUnit_Framework_TestCase
     public function testConvertSimpleEmojiToPlaceholder($id, $char)
     {
         $text = "Dearly departed ...";
-        $expect = "$text &#x$id;";
+        $expect = "$text :emoji-$id:";
 
-        $this->assertEquals($expect, $this->converter->emojiToEntities("$text $char"));
+        $this->assertEquals($expect, $this->converter->emojiToPlaceholders("$text $char"));
     }
 
     /**
@@ -90,8 +90,8 @@ class ConverterTest extends \PHPUnit_Framework_TestCase
     {
         $text = "Dearly departed ...";
         $expect = "$text $char";
-        $placeholders = "$text &#x$id;";
+        $placeholders = "$text :emoji-$id:";
 
-        $this->assertEquals($expect, $this->converter->entitiesToEmoji($placeholders));
+        $this->assertEquals($expect, $this->converter->placeholdersToEmoji($placeholders));
     }
 }

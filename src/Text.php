@@ -22,10 +22,11 @@ class Text
     private $text;
 
     /** @var string */
-    private $textEntities;
+    private $textPlaceholders;
 
     /** @var string */
     private $textEmoji;
+
 
     /**
      * Text constructor.
@@ -43,14 +44,14 @@ class Text
      *
      * @return null|string
      */
-    public function getWithEntities()
+    public function getWithPlaceholders()
     {
-        if (null === $this->textEntities) {
-            $this->textEntities =
-                $this->converter->emojiToEntities($this->text);
+        if (null === $this->textPlaceholders) {
+            $this->textPlaceholders =
+                $this->converter->emojiToPlaceholders($this->text);
         }
 
-        return $this->textEntities;
+        return $this->textPlaceholders;
     }
 
     /**
@@ -61,8 +62,8 @@ class Text
     public function getWithEmoji()
     {
         if (null === $this->textEmoji) {
-            $text = $this->getWithEntities();
-            $this->textEmoji = $this->converter->entitiesToEmoji($text);
+            $text = $this->getWithPlaceholders();
+            $this->textEmoji = $this->converter->placeholdersToEmoji($text);
         }
 
         return $this->textEmoji;
