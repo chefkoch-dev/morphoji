@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: jens
- * Date: 22/12/2016
- * Time: 10:07
- */
 
 namespace Chefkoch\Morphoji;
 
