@@ -9,11 +9,11 @@ class TextTest extends \PHPUnit_Framework_TestCase
 
     public function testSimpleEmojiAsPlaceholders() {
         $text = new Text("Whoohoo 🐧");
-        $this->assertEquals("Whoohoo &#x1f427;", $text->getWithEntities());
+        $this->assertEquals("Whoohoo :emoji-1f427:", $text->getWithPlaceholders());
     }
 
     public function testSimpleEmojiAsUnicode() {
-        $text = new Text("Whoohoo &#x1f427;");
+        $text = new Text("Whoohoo :emoji-1f427:");
         $this->assertEquals("Whoohoo 🐧", $text->getWithEmoji());
     }
 }

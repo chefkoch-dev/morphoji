@@ -3,7 +3,7 @@
 ![](https://travis-ci.org/chefkoch-dev/morphoji.svg?branch=master)
 
 Morphoji is a tiny PHP library to **morph** Unicode Em**oji** characters 🤗 into 
-HTML entities 🙀 and back. 👍
+Latin1 placeholders🙀 and back. 👍
 
 ## Use Case
 
@@ -59,13 +59,15 @@ Now if you have `$text` containing (possibly) Emoji characters handle it like
 this:
 
 ```php
+$text = '...'; // Some text with unicode emojis.
+
 $converter = new \Chefkoch\Morphoji\Converter();
 
-$textWithEntities = $converter->emojiToEntities($text);
+$textWithPlaceholders = $converter->emojiToPlaceholders($text);
 
-$db->insert($textWithEntities); // Dummy code for DB insert command.
+$db->insert($textWithPlaceholders); // Dummy code for DB insert command.
 
-$textWithEmoji = $converter->entitiesToEmoji($textWithEntities);
+$textWithEmoji = $converter->placeholdersToEmoji($textWithPlaceholders);
 
 return new Response($textWithEmoji); // Dummy code for HTML response to browser.
 ```
@@ -78,7 +80,7 @@ call stack space to spare. :)
 ```php
 $text = new \Chefkoch\Morphoji\Text($rawTextWithEmoji);
 
-$text->getWithEntities();
+$text->getWithPlaceholders();
 $text->getWithEmoji();
 ```
 
@@ -89,33 +91,34 @@ representation. This happens by using a regular expression derived from
 [official Unicode charts](http://www.unicode.org/Public/emoji/5.0/).
 
 Every character matching that regular expression will be converted into a
-html unicode entity:
+latin1 placeholder:
 
 ```
-&#x[hex code];
+:emoji-[hex code]:
 ```
 
 E.g. a replaced "face blowing a kiss" Emoji (`1F618`, 😘) will be represented 
-as `&#x1f618;`.
+as `:emoji-1f618:`.
 
-Converting the entity back works with an according regex; other than that it's 
-pretty much vice versa.
+Converting the placeholder back works with an according regex; other than that 
+it's pretty much vice versa.
 
-### Why not just convert one way and then use HTML entities in the output?
+### Why not just convert into HTML entities and then use those in the output?
 
-Morphoji gives you the means to convert the entities back to UTF-8, feel free
-to not use it though. ^^
+Morphoji aims to be output device agnostic. If you just want to HTML everything
+that's fine, but in that case this is probably not the library you are looking
+for.
 
 In my case the data stored in the database isn't necessarily output in an HTML
-context, so being able to convert the entities back is necessary. (And in a time
+context, so being able to convert the entities back is mandatory. (And in a time
 where almost all output devices / applications are able to handle full UTF-8 it
 is the generally cleaner approach.)
 
 ## Other languages
 
 There are no plans to implement this in any other language. Coming up with the
-emoji/entity detection regex is about half the work, if you want to use it in 
-your own implementation, feel free.
+emoji detection regex is about half the work, if you want to use it in your own 
+implementation: go ahead.
 
 ## Tests
 
