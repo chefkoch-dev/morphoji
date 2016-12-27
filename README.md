@@ -1,6 +1,6 @@
 # Morphoji
 
-![](https://travis-ci.org/chefkoch-dev/morphoji.svg?branch=master)
+[![Build Status](https://travis-ci.org/chefkoch-dev/morphoji.svg?branch=master)](https://travis-ci.org/chefkoch-dev/morphoji)
 
 Morphoji is a tiny PHP library to **morph** Unicode Em**oji** characters 🤗 into 
 Latin1 placeholders🙀 and back. 👍
