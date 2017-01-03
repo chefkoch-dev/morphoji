@@ -70,7 +70,7 @@ $db->insert($textWithPlaceholders); // Dummy code for DB insert command.
 
 // Instead of initializing converters with the text, it can be set later.
 $placeholderConverter = new \Chefkoch\Morphoji\PlaceholderConverter();
-$textWithEmoji = $converter->setText($textWithPlaceholders)->convert();
+$textWithEmoji = $placeholderConverter->setText($textWithPlaceholders)->convert();
 
 return new Response($textWithEmoji); // Dummy code for HTML response to browser.
 ```
