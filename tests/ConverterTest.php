@@ -2,7 +2,6 @@
 
 namespace Chefkoch\Morphoji\Tests;
 
-use Chefkoch\Morphoji\Converter_old;
 use Chefkoch\Morphoji\EmojiConverter;
 use Chefkoch\Morphoji\PlaceholderConverter;
 
