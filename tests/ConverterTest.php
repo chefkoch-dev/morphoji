@@ -2,17 +2,11 @@
 
 namespace Chefkoch\Morphoji\Tests;
 
-use Chefkoch\Morphoji\Converter;
+use Chefkoch\Morphoji\EmojiConverter;
+use Chefkoch\Morphoji\PlaceholderConverter;
 
 class ConverterTest extends \PHPUnit_Framework_TestCase
 {
-
-    /** @var Converter */
-    private $converter;
-
-    protected function setUp() {
-        $this->converter = new Converter();
-    }
 
     public function variantEmojiProvider()
     {
@@ -49,8 +43,9 @@ class ConverterTest extends \PHPUnit_Framework_TestCase
     {
         $text = "Happy new year!";
         $expect = "$text :emoji-{$charId}::emoji-{$modId}:";
+        $converter = new EmojiConverter("$text $char");
 
-        $this->assertEquals($expect, $this->converter->emojiToPlaceholders("$text $char"));
+        $this->assertSame($expect, $converter->convert());
     }
 
     /**
@@ -64,8 +59,9 @@ class ConverterTest extends \PHPUnit_Framework_TestCase
         $text = "Happy new year!";
         $expect = "$text $char";
         $placeholders= "$text :emoji-{$charId}::emoji-{$modId}:";
+        $converter = new PlaceholderConverter($placeholders);
 
-        $this->assertEquals($expect, $this->converter->placeholdersToEmoji($placeholders));
+        $this->assertSame($expect, $converter->convert());
     }
 
     /**
@@ -77,8 +73,10 @@ class ConverterTest extends \PHPUnit_Framework_TestCase
     {
         $text = "Dearly departed ...";
         $expect = "$text :emoji-$id:";
+        $converter = new EmojiConverter();
 
-        $this->assertEquals($expect, $this->converter->emojiToPlaceholders("$text $char"));
+        $this->assertSame(
+            $expect, $converter->setText("$text $char")->convert());
     }
 
     /**
@@ -91,7 +89,8 @@ class ConverterTest extends \PHPUnit_Framework_TestCase
         $text = "Dearly departed ...";
         $expect = "$text $char";
         $placeholders = "$text :emoji-$id:";
+        $converter = new PlaceholderConverter();
 
-        $this->assertEquals($expect, $this->converter->placeholdersToEmoji($placeholders));
+        $this->assertSame($expect, $converter->setText($placeholders)->convert());
     }
 }

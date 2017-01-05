@@ -53,7 +53,7 @@ where you want to use it:
 composer require chefkoch/morphoji
 ```
 
-### Converter
+### Converters
 
 Now if you have `$text` containing (possibly) Emoji characters handle it like 
 this:
@@ -61,27 +61,18 @@ this:
 ```php
 $text = '...'; // Some text with unicode emojis.
 
-$converter = new \Chefkoch\Morphoji\Converter();
 
-$textWithPlaceholders = $converter->emojiToPlaceholders($text);
+$emojiConverter = new \Chefkoch\Morphoji\EmojiConverter($text);
+$textWithPlaceholders = $emojiConverter->convert();
 
 $db->insert($textWithPlaceholders); // Dummy code for DB insert command.
 
-$textWithEmoji = $converter->placeholdersToEmoji($textWithPlaceholders);
+
+// Instead of initializing converters with the text, it can be set later.
+$placeholderConverter = new \Chefkoch\Morphoji\PlaceholderConverter();
+$textWithEmoji = $placeholderConverter->setText($textWithPlaceholders)->convert();
 
 return new Response($textWithEmoji); // Dummy code for HTML response to browser.
-```
-
-### Text
-
-Alternatively you can use the `Text` class if you want to go fully OO and have
-call stack space to spare. :)
-
-```php
-$text = new \Chefkoch\Morphoji\Text($rawTextWithEmoji);
-
-$text->getWithPlaceholders();
-$text->getWithEmoji();
 ```
 
 ## How it works
