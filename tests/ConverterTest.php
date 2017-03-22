@@ -2,8 +2,7 @@
 
 namespace Chefkoch\Morphoji\Tests;
 
-use Chefkoch\Morphoji\EmojiConverter;
-use Chefkoch\Morphoji\PlaceholderConverter;
+use Chefkoch\Morphoji\Converter;
 
 class ConverterTest extends \PHPUnit_Framework_TestCase
 {
@@ -43,9 +42,8 @@ class ConverterTest extends \PHPUnit_Framework_TestCase
     {
         $text = "Happy new year!";
         $expect = "$text :emoji-{$charId}::emoji-{$modId}:";
-        $converter = new EmojiConverter("$text $char");
 
-        $this->assertSame($expect, $converter->convert());
+        $this->assertSame($expect, (new Converter())->fromEmojis("$text $char"));
     }
 
     /**
@@ -59,9 +57,8 @@ class ConverterTest extends \PHPUnit_Framework_TestCase
         $text = "Happy new year!";
         $expect = "$text $char";
         $placeholders= "$text :emoji-{$charId}::emoji-{$modId}:";
-        $converter = new PlaceholderConverter($placeholders);
 
-        $this->assertSame($expect, $converter->convert());
+        $this->assertSame($expect, (new Converter())->toEmojis($placeholders));
     }
 
     /**
@@ -73,10 +70,8 @@ class ConverterTest extends \PHPUnit_Framework_TestCase
     {
         $text = "Dearly departed ...";
         $expect = "$text :emoji-$id:";
-        $converter = new EmojiConverter();
 
-        $this->assertSame(
-            $expect, $converter->setText("$text $char")->convert());
+        $this->assertSame($expect, (new Converter())->fromEmojis("$text $char"));
     }
 
     /**
@@ -89,8 +84,28 @@ class ConverterTest extends \PHPUnit_Framework_TestCase
         $text = "Dearly departed ...";
         $expect = "$text $char";
         $placeholders = "$text :emoji-$id:";
-        $converter = new PlaceholderConverter();
 
-        $this->assertSame($expect, $converter->setText($placeholders)->convert());
+        $this->assertSame($expect, (new Converter())->toEmojis($placeholders));
+    }
+
+    public function testWrap()
+    {
+        $text = "Dearly departed ...";
+        $placeholder = ":emoji-2122:";
+
+        $wrapped = (new Converter())->wrap($text.' '.$placeholder);
+
+        $this->assertSame("$text <span class=\"emoji\">$placeholder</span>", $wrapped);
+    }
+
+    public function testWrapAndReplaceInnerHtml()
+    {
+        $text = "Dearly departed ...";
+        $placeholder = ":emoji-2122:";
+        $replace = '&nbsp;';
+
+        $wrapped = (new Converter())->wrap($text.' '.$placeholder, $replace);
+
+        $this->assertSame("$text <span class=\"emoji\">$replace</span>", $wrapped);
     }
 }
