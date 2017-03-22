@@ -53,7 +53,7 @@ where you want to use it:
 composer require chefkoch/morphoji
 ```
 
-### Converters
+### Converting
 
 Now if you have `$text` containing (possibly) Emoji characters handle it like 
 this:
@@ -62,18 +62,36 @@ this:
 $text = '...'; // Some text with unicode emojis.
 
 
-$emojiConverter = new \Chefkoch\Morphoji\EmojiConverter($text);
-$textWithPlaceholders = $emojiConverter->convert();
+$converter = new \Chefkoch\Morphoji\Converter();
 
-$db->insert($textWithPlaceholders); // Dummy code for DB insert command.
+// From utf-8 text to db.
+$textForDb = $converter->fromEmojis($text);
+$db->insert($textForDb); // Dummy code for DB insert command.
 
-
-// Instead of initializing converters with the text, it can be set later.
-$placeholderConverter = new \Chefkoch\Morphoji\PlaceholderConverter();
-$textWithEmoji = $placeholderConverter->setText($textWithPlaceholders)->convert();
-
+// From db to utf-8 text.
+$textWithEmoji = $converter->toEmojis($db->getTextWithPlaceholders());
 return new Response($textWithEmoji); // Dummy code for HTML response to browser.
 ```
+
+### Wrapping
+
+Additionally you can convert a string with emoji placeholders to a string where
+these placeholders are wrapped with arbitray prefix and suffix.
+
+For example you can use this to decorate the placeholders with tags.
+
+```php
+$placeholderText = 'Lorem :emoji-12345: ipsum';
+
+$converter = new \Chefkoch\Morphoji\Converter();
+
+$wrapped = $converter->wrap($placeholderText, '&nbsp;');
+
+// results in $wrapped == 'Lorem <span class="emoji" data-emoji-code="12345">&nbsp;</span> ipsum'
+```
+
+This way you can replace them with your own graphics when rendering the text in 
+whatever your frontend may be.
 
 ## How it works
 
