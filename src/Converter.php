@@ -5,7 +5,6 @@ namespace Chefkoch\Morphoji;
 
 class Converter implements ConverterInterface, WrapperInterface
 {
-
     const DELIMITER = ':';
 
     /** @var Detector */
@@ -57,19 +56,27 @@ class Converter implements ConverterInterface, WrapperInterface
     }
 
     /**
+     * @inheritdoc
+     *
      * By default wraps with span tags with class 'emoji', overridable via
      * $prefix and $postfix variables. Optionally replaces the placeholder
      * between pre- and postfix with the given innerHtml string (e.g.
      * &nbsp; could be a good choice for that).
-     *
-     * @inheritdoc
      */
-    public function wrap($text, $innerHtml = null, $prefix = '<span class="emoji">', $postfix = '</span>')
+    public function wrap(
+        $text,
+        $innerHtml = null,
+        $prefix = '<span class="emoji" data-emoji-code=":code:">',
+        $postfix = '</span>'
+    )
     {
         $wrappedText = preg_replace_callback(
             $this->getPlaceholderPattern(),
             function ($match) use ($innerHtml, $prefix, $postfix) {
-                return $prefix . ($innerHtml ?: array_shift($match)) . $postfix;
+                list($placeholder, $code) = $match;
+                list($pre, $post) = str_replace(':code:', $code, [$prefix, $postfix]);
+
+                return $pre . ($innerHtml ?: $placeholder) . $post;
             },
             $text
         );

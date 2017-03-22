@@ -95,7 +95,7 @@ class ConverterTest extends \PHPUnit_Framework_TestCase
 
         $wrapped = (new Converter())->wrap($text.' '.$placeholder);
 
-        $this->assertSame("$text <span class=\"emoji\">$placeholder</span>", $wrapped);
+        $this->assertSame("$text <span class=\"emoji\" data-emoji-code=\"2122\">$placeholder</span>", $wrapped);
     }
 
     public function testWrapAndReplaceInnerHtml()
@@ -106,6 +106,6 @@ class ConverterTest extends \PHPUnit_Framework_TestCase
 
         $wrapped = (new Converter())->wrap($text.' '.$placeholder, $replace);
 
-        $this->assertSame("$text <span class=\"emoji\">$replace</span>", $wrapped);
+        $this->assertSame("$text <span class=\"emoji\" data-emoji-code=\"2122\">$replace</span>", $wrapped);
     }
 }
